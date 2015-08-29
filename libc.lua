@@ -1,4 +1,5 @@
 require("netinet/in_h")
+require("netinet/tcp")
 require("sys/epoll")()
 require("sys/stat")()
 require("stdlib")()
