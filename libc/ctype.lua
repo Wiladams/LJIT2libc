@@ -67,4 +67,12 @@ local exports = {
 	toupper = toupper;
 }
 
+setmetatable(exports, {
+	__call = function(self, tbl)
+		utils.copyPairs(tbl, exports)
+
+		return self
+	end,
+})
+
 return exports
