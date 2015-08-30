@@ -2,7 +2,7 @@
 	C99 standard headers
 	assert.h
 	complex.h
-	ctype.h
+	*ctype.h
 	errno.h
 	fenv.h
 	float.h

@@ -17,3 +17,29 @@ them any safer, it just provides ready access to the routines.
 In many case, such as the string routines, you're dealing with raw
 pointers, with all the potential for buffer overruns and the like
 that exist when you're using the routines from C.
+
+C99 standard headers
+	assert.h
+	complex.h
+	*ctype.h
+	errno.h
+	fenv.h
+	float.h
+	inttypes.h
+	iso646.h
+	limits.h
+	locale.h
+	math.h
+	setjmp.h
+	signal.h
+	stdarg.h
+	stdbool.h
+	stddef.h
+	stdint.h
+	stdio.h
+	*stdlib.h
+	string.h
+	tgmath.h
+	time.h
+	wchar.h
+	wctype.h
