@@ -13,7 +13,7 @@
 
 local ffi = require("ffi")
 local utils = require("libc_utils")
-local alltypes = require("bits/alltypes")
+local alltypes = require("alltypes")
 
 
 ffi.cdef[[
@@ -39,8 +39,8 @@ ffi.cdef[[
 typedef long ssize_t;
 
 
-struct timeval { time_t tv_sec; suseconds_t tv_usec; };
-struct timespec { time_t tv_sec; long tv_nsec; };
+//struct timeval { time_t tv_sec; suseconds_t tv_usec; };
+//struct timespec { time_t tv_sec; long tv_nsec; };
 
 typedef uint64_t dev_t;
 typedef uint32_t mode_t;
@@ -53,8 +53,6 @@ typedef unsigned int socklen_t;
 end
 
 local Types = {
-	timeval = ffi.typeof("struct timeval");
-	timespec = ffi.typeof("struct timespec");	
 }
 
 local exports = {

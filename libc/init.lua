@@ -33,6 +33,7 @@ local exports = {
 
 	byteswap = require("byteswap");
 	ctype = require("ctype");
+	fcntl = require("fcntl");
 	stdint = require("stdint");
 	stdlib = require("stdlib");
 }

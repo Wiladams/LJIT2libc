@@ -4,6 +4,7 @@ local ffi = require("ffi")
 local utils = require("libc_utils")
 
 --[[
+TODO
 These get used lexically to modify other types
 so we can't just #define them
 
@@ -18,7 +19,9 @@ typedef unsigned _Addr size_t;
 Perhaps define them as strings and create a macro to deal with 
 the concatenation.
 --]]
-
+ffi.cdef[[
+typedef long _Int64;
+]]
 
 
 ffi.cdef[[
