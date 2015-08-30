@@ -14,18 +14,27 @@
 
 local ffi = require("ffi")
 
---print("ARCH: ", ffi.arch)
+-- somewhere within an application,the following will need to be 
+-- setup.  If not, the relative paths will not work correctly
 package.path = package.path..";./arch/"..ffi.arch.."/?.lua"
+
 
 local utils = require("libc_utils")
 
 local exports = {
 	netinet_in = require("netinet/in_h");
 	netinet_tcp = require("netinet/tcp");
+
 	sys_epoll = require("sys/epoll");
+	sys_socket = require("sys/socket");
 	sys_stat = require("sys/stat");
-	stdlib = require("stdlib");
+	sys_types = require("sys/types");
+
+
+	byteswap = require("byteswap");
+	ctype = require("ctype");
 	stdint = require("stdint");
+	stdlib = require("stdlib");
 }
 
 setmetatable(exports, {

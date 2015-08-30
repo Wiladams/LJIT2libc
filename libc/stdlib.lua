@@ -1,6 +1,8 @@
 local ffi = require("ffi")
 local utils = require("libc_utils")
 
+local alltypes = require("bits/alltypes")
+
 ffi.cdef[[
 
 

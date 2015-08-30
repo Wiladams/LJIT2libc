@@ -69,7 +69,7 @@ local exports = {
 
 setmetatable(exports, {
 	__call = function(self, tbl)
-		utils.copyPairs(tbl, exports)
+		utils.copyPairs(exports, tbl)
 
 		return self
 	end,
