@@ -1,4 +1,5 @@
 local ffi = require("ffi")
+local utils = require("libc_utils")
 
 ffi.cdef[[
 /* Flags to be passed to epoll_create1.  */
@@ -37,18 +38,17 @@ int epoll_wait (int __epfd, struct epoll_event *__events, int __maxevents, int _
 //          const __sigset_t *__ss);
 ]]
 
-
 local exports = {
 	epoll_create = ffi.C.epoll_create;
 	epoll_create1 = ffi.C.epoll_create1;
 	epoll_ctl = ffi.C.epoll_ctl;
 	epoll_wait = ffi.C.epoll_wait;
 }
+
+
 setmetatable(exports, {
-	__call = function(self, library)
-		for k,v in pairs(self) do
-			_G[k] = v;
-		end
+	__call = function(self, tbl)
+		utils.copyTable(exports, tbl)
 
 		return self;
 	end,

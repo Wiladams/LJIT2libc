@@ -1,4 +1,5 @@
 local ffi = require("ffi")
+local utils = require("libc_utils")
 
 ffi.cdef[[
 
@@ -121,15 +122,11 @@ local exports = {
 	Functions = Functions;
 }
 
-setmetatable(exports, {
-	__call = function(self, library)
-		for k,v in pairs(self.Constants) do
-			_G[k] = v;
-		end
 
-		for k,v in pairs(self.Functions) do
-			_G[k] = v;
-		end
+setmetatable(exports, {
+	__call = function(self, tbl)
+		utils.copyPairs(self.Constants, tbl)
+		utils.copyPairs(self.Functions, tbl)
 
 		return self
 	end,

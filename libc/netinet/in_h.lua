@@ -1,4 +1,5 @@
 local ffi = require("ffi")
+local utils = require("libc_utils")
 
 require("sys/socket")
 

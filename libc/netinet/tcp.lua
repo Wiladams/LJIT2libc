@@ -1,4 +1,5 @@
 local ffi = require("ffi")
+local utils = require("libc_utils")
 
 
 require ("sys/types")
@@ -98,6 +99,58 @@ struct tcphdr {
 ]]
 end 
 
+ffi.cdef[[
+struct tcp_info
+{
+	uint8_t tcpi_state;
+	uint8_t tcpi_ca_state;
+	uint8_t tcpi_retransmits;
+	uint8_t tcpi_probes;
+	uint8_t tcpi_backoff;
+	uint8_t tcpi_options;
+	uint8_t tcpi_snd_wscale : 4, tcpi_rcv_wscale : 4;
+	uint32_t tcpi_rto;
+	uint32_t tcpi_ato;
+	uint32_t tcpi_snd_mss;
+	uint32_t tcpi_rcv_mss;
+	uint32_t tcpi_unacked;
+	uint32_t tcpi_sacked;
+	uint32_t tcpi_lost;
+	uint32_t tcpi_retrans;
+	uint32_t tcpi_fackets;
+	uint32_t tcpi_last_data_sent;
+	uint32_t tcpi_last_ack_sent;
+	uint32_t tcpi_last_data_recv;
+	uint32_t tcpi_last_ack_recv;
+	uint32_t tcpi_pmtu;
+	uint32_t tcpi_rcv_ssthresh;
+	uint32_t tcpi_rtt;
+	uint32_t tcpi_rttvar;
+	uint32_t tcpi_snd_ssthresh;
+	uint32_t tcpi_snd_cwnd;
+	uint32_t tcpi_advmss;
+	uint32_t tcpi_reordering;
+	uint32_t tcpi_rcv_rtt;
+	uint32_t tcpi_rcv_space;
+	uint32_t tcpi_total_retrans;
+	uint64_t tcpi_pacing_rate;
+	uint64_t tcpi_max_pacing_rate;
+};
+]]
+
+ffi.cdef[[
+static const int TCP_MD5SIG_MAXKEYLEN   = 80;
+
+struct tcp_md5sig
+{
+	struct sockaddr_storage tcpm_addr;
+	uint16_t __tcpm_pad1;
+	uint16_t tcpm_keylen;
+	uint32_t __tcpm_pad2;
+	uint8_t tcpm_key[TCP_MD5SIG_MAXKEYLEN];
+};
+]]
+
 
 
 local Constants = {
@@ -159,57 +212,6 @@ local Constants = {
 	TCP_CA_Loss		= 4;
 }
 
-ffi.cdef[[
-struct tcp_info
-{
-	uint8_t tcpi_state;
-	uint8_t tcpi_ca_state;
-	uint8_t tcpi_retransmits;
-	uint8_t tcpi_probes;
-	uint8_t tcpi_backoff;
-	uint8_t tcpi_options;
-	uint8_t tcpi_snd_wscale : 4, tcpi_rcv_wscale : 4;
-	uint32_t tcpi_rto;
-	uint32_t tcpi_ato;
-	uint32_t tcpi_snd_mss;
-	uint32_t tcpi_rcv_mss;
-	uint32_t tcpi_unacked;
-	uint32_t tcpi_sacked;
-	uint32_t tcpi_lost;
-	uint32_t tcpi_retrans;
-	uint32_t tcpi_fackets;
-	uint32_t tcpi_last_data_sent;
-	uint32_t tcpi_last_ack_sent;
-	uint32_t tcpi_last_data_recv;
-	uint32_t tcpi_last_ack_recv;
-	uint32_t tcpi_pmtu;
-	uint32_t tcpi_rcv_ssthresh;
-	uint32_t tcpi_rtt;
-	uint32_t tcpi_rttvar;
-	uint32_t tcpi_snd_ssthresh;
-	uint32_t tcpi_snd_cwnd;
-	uint32_t tcpi_advmss;
-	uint32_t tcpi_reordering;
-	uint32_t tcpi_rcv_rtt;
-	uint32_t tcpi_rcv_space;
-	uint32_t tcpi_total_retrans;
-	uint64_t tcpi_pacing_rate;
-	uint64_t tcpi_max_pacing_rate;
-};
-]]
-
-ffi.cdef[[
-static const int TCP_MD5SIG_MAXKEYLEN   = 80;
-
-struct tcp_md5sig
-{
-	struct sockaddr_storage tcpm_addr;
-	uint16_t __tcpm_pad1;
-	uint16_t tcpm_keylen;
-	uint32_t __tcpm_pad2;
-	uint8_t tcpm_key[TCP_MD5SIG_MAXKEYLEN];
-};
-]]
 
 
 local exports = {
@@ -218,16 +220,12 @@ local exports = {
 }
 
 setmetatable(exports, {
-	__call = function(self, library)
-		for k,v in pairs(self.Constants) do
-			_G[k] = v;
-		end
-
-		for k,v in pairs(self.Functions) do
-			_G[k] = v;
-		end
+	__call = function(self, tbl)
+		utils.copyPairs(self.Constants, tbl);
+		utils.copyPairs(self.Functions, tbl);
 
 		return self
 	end,
 })
 
+return exports

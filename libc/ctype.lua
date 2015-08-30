@@ -14,6 +14,7 @@
 local ffi = require("ffi")
 local bit = require("bit")
 local bor = bit.bor;
+local utils = require("libc_utils")
 
 local byte = string.byte;
 

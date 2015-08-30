@@ -12,10 +12,11 @@
 --]]
 
 local ffi = require("ffi")
-local cdef = ffi.cdef
+local utils = require("libc_utils")
+
 
 if ffi.os == "Linux" then
-cdef[[
+ffi.cdef[[
 typedef long ssize_t;
 
 typedef long time_t;
@@ -36,3 +37,21 @@ typedef unsigned int socklen_t;
 ]]
 end
 
+local Types = {
+	timeval = ffi.typeof("struct timeval");
+	timespec = ffi.typeof("struct timespec");	
+}
+
+local exports = {
+	Types = Types;
+}
+
+setmetatable(exports, {
+	__call = function(self, tbl)
+		utils.copyPairs(self.Types, tbl);
+
+		return self
+	end,
+})
+
+return exports

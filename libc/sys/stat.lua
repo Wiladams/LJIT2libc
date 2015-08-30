@@ -5,13 +5,13 @@
 local ffi = require("ffi")
 local bit = require("bit")
 local band = bit.band;
+local utils = require("libc_utils")
+
 
 require("sys/types")
 
+local octal = utils.octal;
 
-local function octal(val)
-	return tonumber(val,8);
-end
 
 ffi.cdef[[
 int stat(const char *__restrict, struct stat *__restrict);
@@ -68,7 +68,8 @@ local Constants = {
 	UTIME_OMIT = 0x3ffffffe;
 }
 
-local Macros = {
+local Functions = {
+	-- Macros
 	S_ISLNK	= function(m) return (band(m, Constants.S_IFMT) == Constants.S_IFLNK) end;
 	S_ISREG	= function(m) return (band(m, Constants.S_IFMT) == Constants.S_IFREG) end;
 	S_ISDIR	= function(m) return (band(m, Constants.S_IFMT) == Constants.S_IFDIR) end;
@@ -76,23 +77,19 @@ local Macros = {
 	S_ISBLK	= function(m) return (band(m, Constants.S_IFMT) == Constants.S_IFBLK) end;
 	S_ISFIFO	= function(m) return (band(m, Constants.S_IFMT) == Constants.S_IFIFO) end;
 	S_ISSOCK	= function(m) return (band(m, Constants.S_IFMT) == Constants.S_IFSOCK) end;
+
+	-- library functions
 }
 
 local exports = {
 	Constants = Constants;
-	Macros = Macros;
 	Functions = Functions;
 }
 
 setmetatable(exports, {
-	__call = function(self, ...)
-		for k,v in pairs(Constants) do
-			_G[k]=v;
-		end
-
-		for k,v in pairs(Macros) do
-			_G[k]=v;
-		end
+	__call = function(self, tbl)
+		utils.copyPairs(self.Constants, tbl)
+		utils.copyPairs(self.Functions, tbl)
 
 		return self;
 	end,
