@@ -19,30 +19,30 @@ pointers, with all the potential for buffer overruns and the like
 that exist when you're using the routines from C.
 
 C99 standard headers
-	assert.h
-	complex.h
-	*ctype.h
-	errno.h
-	fenv.h
-	float.h
-	inttypes.h
-	iso646.h
-	limits.h
-	locale.h
-	math.h
-	setjmp.h
-	signal.h
-	stdarg.h
-	stdbool.h
-	stddef.h
-	stdint.h
-	stdio.h
-	*stdlib.h
-	string.h
-	tgmath.h
-	time.h
-	wchar.h
-	wctype.h
+*	assert.h
+*	complex.h
+*	ctype.h
+*	errno.h
+*	fenv.h
+*	float.h
+*	inttypes.h
+*	iso646.h
+*	limits.h
+*	locale.h
+*	math.h
+*	setjmp.h
+*	signal.h
+*	stdarg.h
+*	stdbool.h
+*	stddef.h
+*	stdint.h
+*	stdio.h
+*	stdlib.h
+*	string.h
+*	tgmath.h
+*	time.h
+*	wchar.h
+*	wctype.h
 
 
 Design Considerations
@@ -53,8 +53,8 @@ A balance must be achieved between making the various constants easily accessibl
 
 Here is a typical use case:
 
-local stdint = require("stdint")
-print(stdint.Constants.INT32_MAX)
+```local stdint = require("stdint")
+print(stdint.Constants.INT32_MAX)'''
 
 In this case, nothing is in the global namespace, and the constants can be accessed through the proper table access.  Although this is great, it makes porting typical C code very difficult as the table references must be placed everywhere.
 
