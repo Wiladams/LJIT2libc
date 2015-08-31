@@ -195,3 +195,14 @@ local exports = {
 	Constants = Constants;
 	Functions = Functions;
 }
+
+setmetatable(exports, {
+	__call = function(self, ...)
+		utils.copyPairs(self.Constants);
+		utils.copyPairs(self.Functions);
+
+		return self;
+	end,
+})
+
+return exports
