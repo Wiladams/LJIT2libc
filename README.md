@@ -53,24 +53,30 @@ A balance must be achieved between making the various constants easily accessibl
 
 Here is a typical use case:
 
-```local stdint = require("stdint")
-print(stdint.Constants.INT32_MAX)'''
+```lua
+local stdint = require("stdint")
+print(stdint.Constants.INT32_MAX)
+```
 
 In this case, nothing is in the global namespace, and the constants can be accessed through the proper table access.  Although this is great, it makes porting typical C code very difficult as the table references must be placed everywhere.
 
 Here is another way of doing it:
 
+```lua
 local stdint = require("stdint")(_G)
 print(INT32_MAX)
+```
 
 In this case, the returned table has a '__call()' metamethod implemented (as do all files), which will copy the contents of the various tables into the passed in table (in this case the global table).  This still gives you the flexibility of keeping everything local, or exporting into a table of your choice.  If no table is specified, then the global table will be used.
 
 The danger/challenge of using the global table like this is your code will become very slow as every single reference to the value will be a global table lookup.  In such cases, it still makes sense to make a local reference, if the number of occurences are fairly small.  So, if you don't need all of the Constants from stdint, only locally copy the ones you need:
 
+```lua
 local stdint = require("stdint")
 local INT32_MAX = stdint.Constants.INT32_MAX;
 local INT64_MAX = stdint.Constants.INT64_MAX;
 
 print(INT32_MAX, INT64_MAX)
+```
 
 This has the advantage of faster usage, and possible optimization, while causing the code to write a little bit more code up front.  Which way you decide to use it may be determined by which tradeoff you're willing to make.  Probably going global in the beginning, and refining to tighter scoping as time goes on.
