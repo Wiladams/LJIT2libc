@@ -42,3 +42,6 @@ typedef int key_t;
 typedef unsigned int useconds_t;
 ]]
 
+ffi.cdef[[
+typedef struct _IO_FILE FILE;
+]]

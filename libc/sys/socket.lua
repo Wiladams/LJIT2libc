@@ -5,6 +5,9 @@ require("sys/types")
 
 local octal = utils.octal
 
+
+require("bits/socket")
+
 ffi.cdef[[
 struct linger
 {

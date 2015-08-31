@@ -12,12 +12,13 @@
 	because this is what has been found to be most useful.
 --]]
 
-local ffi = require("ffi")
 
 -- somewhere within an application,the following will need to be 
 -- setup.  If not, the relative paths will not work correctly
+local ffi = require("ffi")
 package.path = package.path..";./arch/"..ffi.arch.."/?.lua"
-
+print("PACKAGE")
+print(package.path)
 
 local utils = require("libc_utils")
 
@@ -35,13 +36,14 @@ local exports = {
 	ctype = require("ctype");
 	fcntl = require("fcntl");
 	stdint = require("stdint");
+	stdio = require("stdio");
 	stdlib = require("stdlib");
 }
 
 setmetatable(exports, {
 	__call = function(self, tbl)
 		for k,v in pairs(self) do
-			v(tbl)
+			local success, err = pcall(function() v(tbl) end)
 		end
 
 		return self
