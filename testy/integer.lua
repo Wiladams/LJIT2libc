@@ -1,17 +1,13 @@
 local init = require("test_setup")()
 local ffi = require("ffi")
 
-local a = ffi.new("int[1]");
+local int = ffi.typeof("int")
+local int_a = ffi.typeof("int[?]")
 
-printf("Enter an integer\n");
+--local a = ffi.new("int[1]");
+local a = int_a(1);
+
+printf("Enter integer\n");
 scanf("%d", a);
 
-printf("Integer that you have entered is %d\n", a[0]);
---[=[
-  ffi.cdef[[
-  int sscanf(const char *str, const char *fmt, ...);
-  ]]
---]=]
-  local pn = ffi.new("int[1]")
-  ffi.C.sscanf("foo 123", "foo %d", pn)
-  print(pn[0])
+printf("Integer that you have entered is %d\n", int(a[0]));
