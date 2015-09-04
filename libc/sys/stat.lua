@@ -79,6 +79,22 @@ local Functions = {
 	S_ISSOCK	= function(m) return (band(m, Constants.S_IFMT) == Constants.S_IFSOCK) end;
 
 	-- library functions
+	chmod = ffi.C.chmod;
+	fchmod = ffi.C.fchmod;
+	fchmodat = ffi.C.fchmodat;
+--	fstat = ffi.C.fstat;
+--	fstatat = ffi.C.fstatat;
+	futimens = ffi.C.futimens;
+--	lstat = ffi.C.lstat;
+	mkdir = ffi.C.mkdir;
+	mkdirat = ffi.C.mkdirat;
+	mkfifo = ffi.C.mkfifo;
+	mkfifoat = ffi.C.mkfifoat;
+--	mknod = ffi.C.mknod;
+--	mknodat = ffi.C.mknodat;
+--	stat = ffi.C.stat;
+	umask = ffi.C.umask;
+	utimensat = ffi.C.utimensat;
 }
 
 local exports = {
