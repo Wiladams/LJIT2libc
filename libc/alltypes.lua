@@ -18,7 +18,7 @@ ffi.cdef[[
 typedef unsigned int mode_t;
 //typedef unsigned _Reg nlink_t;
 typedef _Int64 off_t;
-//typedef unsigned _Int64 ino_t;
+typedef uint64_t ino_t;
 //typedef unsigned _Int64 dev_t;
 typedef long blksize_t;
 //typedef _Int64 blkcnt_t;

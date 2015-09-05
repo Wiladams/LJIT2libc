@@ -87,19 +87,20 @@ require ("rd_stats")
  */
 
 /* Allocate and init structure */
-#define SREALLOC(S, TYPE, SIZE)	do {								 \
-   					TYPE *_p_;						 \
-				   	_p_ = S;						 \
-   				   	if (SIZE) {						 \
-   				      		if ((S = (TYPE *) realloc(S, (SIZE))) == NULL) { \
-				         		perror("realloc");			 \
-				         		exit(4);				 \
-				      		}						 \
-				      		/* If the ptr was null, then it's a malloc() */	 \
-   				      		if (!_p_)					 \
-      				         		memset(S, 0, (SIZE));			 \
-				   	}							 \
-				} while (0)
+local function SREALLOC(S, TYPE, SIZE)	
+								 
+   					TYPE *_p_;						 
+				   	_p_ = S;						 
+   				   	if (SIZE) {						 
+   				      		if ((S = (TYPE *) realloc(S, (SIZE))) == NULL) { 
+				         		perror("realloc");			 
+				         		exit(4);				 
+				      		}						 
+				      		-- If the ptr was null, then it's a malloc()
+   				      		if (!_p_)					 
+      				         		memset(S, 0, (SIZE));			 
+				   	}
+end
 
 /*
  * Macros used to display statistics values.
@@ -142,6 +143,7 @@ extern unsigned int kb_shift;
 /* Type of persistent device names used in sar and iostat */
 extern char persistent_name_type[MAX_FILE_LEN];
 
+ffi.cdef[[
 /*
  ***************************************************************************
  * Structures definitions
@@ -155,7 +157,9 @@ struct ext_disk_stats {
 	double svctm;
 	double arqsz;
 };
+]]
 
+ffi.cdef[[
 /*
  ***************************************************************************
  * Functions prototypes
@@ -209,5 +213,5 @@ extern char *
 	strtolower(char *);
 extern void
 	sysstat_panic(const char *, int);
+]]
 
-#endif  /* _COMMON_H */

@@ -36,7 +36,9 @@ local function setup(homePath)
 
 		byteswap = require("byteswap");
 		ctype = require("ctype");
+		dirent = require("dirent");
 		fcntl = require("fcntl");
+		libgen = require("libgen");
 		stdint = require("stdint");
 		stdio = require("stdio");
 		stdlib = require("stdlib");
