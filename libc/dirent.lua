@@ -1,5 +1,6 @@
 
 local ffi = require("ffi")
+local utils = require("libc_utils")
 
 --#include <features.h>
 
@@ -96,5 +97,14 @@ local exports = {
 	Constants = Constants;
 	Functions = Functions;
 }
+
+setmetatable(exports, {
+	__call = function(self, tbl)
+		utils.copyPairs(self.Constants, tbl);
+		utils.copyPairs(self.Functions, tbl);
+
+		return self;
+	end,
+})
 
 return exports;

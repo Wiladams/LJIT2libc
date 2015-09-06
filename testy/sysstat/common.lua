@@ -37,6 +37,153 @@ require("rd_stats_h")
 #endif
 --]]
 
+
+-- Maximum length of sensors device name */
+	MAX_SENSORS_DEV_LEN	= 20;
+
+--#include <time.h>
+--#include <sched.h>	/* For __CPU_SETSIZE */
+require ("rd_stats")
+
+
+
+
+local DISP_HDR	= 1;
+
+-- Number of seconds per day
+local SEC_PER_DAY	= 3600 * 24;
+
+-- Maximum number of CPUs
+local NR_CPUS = 2048;
+if __CPU_SETSIZE and __CPU_SETSIZE > 2048 then
+NR_CPUS = __CPU_SETSIZE;
+end
+
+-- Maximum number of interrupts
+local NR_IRQS =			1024;
+
+-- Size of /proc/interrupts line, CPU data excluded
+INTERRUPTS_LINE	= 128;
+
+-- Keywords
+K_ISO	="ISO";
+K_ALL	="ALL";
+K_UTC	="UTC";
+
+-- Files
+STAT			="/proc/stat";
+UPTIME			="/proc/uptime";
+DISKSTATS		="/proc/diskstats";
+INTERRUPTS		="/proc/interrupts";
+MEMINFO			="/proc/meminfo";
+SYSFS_BLOCK		="/sys/block";
+SYSFS_DEV_BLOCK		="/sys/dev/block";
+SYSFS_DEVCPU		="/sys/devices/system/cpu";
+SYSFS_TIME_IN_STATE	="cpufreq/stats/time_in_state";
+S_STAT			="stat";
+DEVMAP_DIR		="/dev/mapper";
+DEVICES			="/proc/devices";
+SYSFS_USBDEV		="/sys/bus/usb/devices";
+DEV_DISK_BY		="/dev/disk/by";
+SYSFS_IDVENDOR		="idVendor";
+SYSFS_IDPRODUCT		="idProduct";
+SYSFS_BMAXPOWER		="bMaxPower";
+SYSFS_MANUFACTURER	="manufacturer";
+SYSFS_PRODUCT		="product";
+SYSFS_FCHOST		="/sys/class/fc_host";
+
+MAX_FILE_LEN		=256;
+MAX_PF_NAME		=1024;
+MAX_NAME_LEN		=128;
+
+IGNORE_VIRTUAL_DEVICES	=false;
+ACCEPT_VIRTUAL_DEVICES	=true;
+
+-- Environment variables
+ENV_TIME_FMT		="S_TIME_FORMAT";
+ENV_TIME_DEFTM		="S_TIME_DEF_TIME";
+
+DIGITS			="0123456789";
+
+--[[
+/*
+ ***************************************************************************
+ * Macro functions definitions.
+ ***************************************************************************
+ */
+
+/* Allocate and init structure */
+local function SREALLOC(S, TYPE, SIZE)	
+								 
+   					TYPE *_p_;						 
+				   	_p_ = S;						 
+   				   	if (SIZE) {						 
+   				      		if ((S = (TYPE *) realloc(S, (SIZE))) == NULL) { 
+				         		perror("realloc");			 
+				         		exit(4);				 
+				      		}						 
+				      		-- If the ptr was null, then it's a malloc()
+   				      		if (!_p_)					 
+      				         		memset(S, 0, (SIZE));			 
+				   	}
+end
+
+/*
+ * Macros used to display statistics values.
+ *
+ * NB: Define SP_VALUE() to normalize to %;
+ * HZ is 1024 on IA64 and % should be normalized to 100.
+ */
+#define S_VALUE(m,n,p)	(((double) ((n) - (m))) / (p) * HZ)
+#define SP_VALUE(m,n,p)	(((double) ((n) - (m))) / (p) * 100)
+
+/*
+ * Under very special circumstances, STDOUT may become unavailable.
+ * This is what we try to guess here.
+ */
+#define TEST_STDOUT(_fd_)	do {					\
+					if (write(_fd_, "", 0) == -1) {	\
+				        	perror("stdout");	\
+				       		exit(6);		\
+				 	}				\
+				} while (0)
+
+#define MINIMUM(a,b)	((a) < (b) ? (a) : (b))
+
+#define PANIC(m)	sysstat_panic(__FUNCTION__, m)
+
+/* Number of ticks per second */
+#define HZ		hz
+
+
+/*
+ * kB <-> number of pages.
+ * Page size depends on machine architecture (4 kB, 8 kB, 16 kB, 64 kB...)
+ */
+#define KB_TO_PG(k)	((k) >> kb_shift)
+#define PG_TO_KB(k)	((k) << kb_shift)
+
+/* Type of persistent device names used in sar and iostat */
+extern char persistent_name_type[MAX_FILE_LEN];
+--]]
+
+ffi.cdef[[
+/*
+ ***************************************************************************
+ * Structures definitions
+ ***************************************************************************
+ */
+
+/* Structure used for extended disk statistics */
+struct ext_disk_stats {
+	double util;
+	double await;
+	double svctm;
+	double arqsz;
+};
+]]
+
+
 -- Number of ticks per second
 local  hz = 0;
 -- Number of bit shifts to convert pages to kB
@@ -53,7 +200,7 @@ local  kb_shift = 0;
 local function print_version()
 
 	printf(_("sysstat version %s\n"), VERSION);
-	printf("(C) Sebastien Godard (sysstat <at> orange.fr)\n");
+	printf("(C) William Adams \n");
 	exit(0);
 end
 
@@ -783,7 +930,7 @@ local function get_persistent_names()
 	if (n < 0) then
 		return (nil);
 	end
-	
+
 	--[[ If directory is empty, it contains 2 entries: "." and ".." --]]
 	if (n <= 2)
 		--[[ Free list and return nil --]]
@@ -910,8 +1057,9 @@ local function get_pretty_name_from_persistent(char *persistent)
 
 	--[[ Persistent name is usually a symlink: Read it... --]]
 	r = readlink(link, target, PATH_MAX);
-	if ((r <= 0) or (r >= PATH_MAX))
-		return (nil);
+	if ((r <= 0) or (r >= PATH_MAX)) then
+		return nil;
+	end
 
 	target[r] = '\0';
 
@@ -925,7 +1073,29 @@ local function get_pretty_name_from_persistent(char *persistent)
 end
 
 local exports = {
-
+	compute_ext_disk_stats=compute_ext_disk_stats;
+	count_bits=count_bits;
+	count_csvalues=count_csvalues;
+	device_name=device_name;
+	get_HZ=get_HZ;
+	get_devmap_major=get_devmap_major;
+	get_interval=get_interval;
+	get_kb_shift=get_kb_shift;
+	get_localtime=get_localtime;
+	get_time=get_time;
+	get_per_cpu_interval=get_per_cpu_interval;
+	get_persistent_name_from_pretty=get_persistent_name_from_pretty;
+	get_persistent_type_dir=get_persistent_type_dir;
+	get_pretty_name_from_persistent=get_pretty_name_from_persistent;
+	get_sysfs_dev_nr=get_sysfs_dev_nr;
+	get_win_height=get_win_height;
+	init_nls=init_nls;
+	is_device=is_device;
+	ll_sp_value=ll_sp_value;
+	print_gal_header=print_gal_header;
+	print_version=print_version;
+	strtolower=strtolower;
+	sysstat_panic=sysstat_panic;
 }
 
 return exports
