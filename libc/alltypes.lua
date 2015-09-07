@@ -16,14 +16,14 @@ TYPEDEF _Reg register_t;
 
 ffi.cdef[[
 typedef unsigned int mode_t;
-//typedef unsigned _Reg nlink_t;
-typedef _Int64 off_t;
+typedef unsigned int nlink_t;
+typedef int64_t off_t;
 typedef uint64_t ino_t;
-//typedef unsigned _Int64 dev_t;
+typedef uint64_t dev_t;
 typedef long blksize_t;
-//typedef _Int64 blkcnt_t;
-//typedef unsigned _Int64 fsblkcnt_t;
-//typedef unsigned _Int64 fsfilcnt_t;
+typedef int64_t blkcnt_t;
+typedef uint64_t fsblkcnt_t;
+typedef uint64_t fsfilcnt_t;
 
 typedef unsigned int wint_t;
 typedef unsigned long wctype_t;
@@ -31,6 +31,7 @@ typedef unsigned long wctype_t;
 typedef void * timer_t;
 typedef int clockid_t;
 typedef long clock_t;
+
 struct timeval { time_t tv_sec; suseconds_t tv_usec; };
 struct timespec { time_t tv_sec; long tv_nsec; };
 

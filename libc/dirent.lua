@@ -4,7 +4,6 @@ local utils = require("libc_utils")
 
 --#include <features.h>
 
-
 require("bits/alltypes")
 
 ffi.cdef[[

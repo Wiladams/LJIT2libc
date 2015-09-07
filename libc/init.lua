@@ -29,6 +29,7 @@ local function setup(homePath)
 		netinet_tcp = require("netinet/tcp");
 
 		sys_epoll = require("sys/epoll");
+		sys_ioctl = require("sys/ioctl");
 		sys_socket = require("sys/socket");
 		sys_stat = require("sys/stat");
 		sys_types = require("sys/types");

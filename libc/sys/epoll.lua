@@ -1,4 +1,7 @@
 local ffi = require("ffi")
+local bit = require("bit")
+local lshift, rshift = bit.lshift, bit.rshift;
+
 local utils = require("libc_utils")
 
 ffi.cdef[[
@@ -38,11 +41,36 @@ int epoll_wait (int __epfd, struct epoll_event *__events, int __maxevents, int _
 //          const __sigset_t *__ss);
 ]]
 
+
 local exports = {
 	epoll_create = ffi.C.epoll_create;
 	epoll_create1 = ffi.C.epoll_create1;
 	epoll_ctl = ffi.C.epoll_ctl;
 	epoll_wait = ffi.C.epoll_wait;
+
+	EPOLLIN 	= 0x0001;
+	EPOLLPRI 	= 0x0002;
+	EPOLLOUT 	= 0x0004;
+	EPOLLRDNORM = 0x0040;			-- SAME AS EPOLLIN
+	EPOLLRDBAND = 0x0080;
+	EPOLLWRNORM = 0x0100;			-- SAME AS EPOLLOUT
+	EPOLLWRBAND = 0x0200;
+	EPOLLMSG	= 0x0400;			-- NOT USED
+	EPOLLERR 	= 0x0008;
+	EPOLLHUP 	= 0x0010;
+	EPOLLRDHUP 	= 0x2000;
+	EPOLLWAKEUP = lshift(1,29);
+	EPOLLONESHOT = lshift(1,30);
+	EPOLLET 	= lshift(1,31);
+
+
+
+
+-- Valid opcodes ( "op" parameter ) to issue to epoll_ctl().
+	EPOLL_CTL_ADD =1;	-- Add a file descriptor to the interface.
+	EPOLL_CTL_DEL =2;	-- Remove a file descriptor from the interface.
+	EPOLL_CTL_MOD =3;	-- Change file descriptor epoll_event structure.
+
 }
 
 

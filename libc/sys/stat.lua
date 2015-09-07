@@ -8,7 +8,8 @@ local band = bit.band;
 local utils = require("libc_utils")
 
 
-require("sys/types")
+require("alltypes")
+require("bits/stat")
 
 local octal = utils.octal;
 
@@ -67,6 +68,8 @@ local Constants = {
 	UTIME_NOW  = 0x3fffffff;
 	UTIME_OMIT = 0x3ffffffe;
 }
+
+local LIB_c = ffi.load("libc")
 
 local Functions = {
 	-- Macros
