@@ -2,6 +2,9 @@
 
 local ffi = require("ffi")
 
+print("OS: ", ffi.os)
+print("Arch: ", ffi.arch)
+
 local function parentPath()
 ffi.cdef[[
 char *getcwd(char *, size_t);
@@ -18,6 +21,7 @@ local function homePath()
 	return parentPath().."/libc";
 end
 
+print("Home Path: ", homePath())
 
 local function setup()
 	-- we have to set the package path here so that we can
