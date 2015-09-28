@@ -32,6 +32,7 @@ local function setup(homePath)
 		sys_ioctl = require("sys/ioctl");
 		sys_socket = require("sys/socket");
 		sys_stat = require("sys/stat");
+		sys_syscall = require("sys/syscall");
 		sys_types = require("sys/types");
 
 

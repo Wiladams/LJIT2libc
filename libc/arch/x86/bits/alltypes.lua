@@ -8,9 +8,10 @@ TODO
 These get used lexically to modify other types
 so we can't just #define them
 
-#define _Addr long
-#define _Int64 long
-#define _Reg long
+
+#define _Addr int
+#define _Int64 long long
+#define _Reg int
 
 Typical usage:
 
@@ -20,7 +21,7 @@ Perhaps define them as strings and create a macro to deal with
 the concatenation.
 --]]
 ffi.cdef[[
-typedef long _Int64;
+typedef long long _Int64;
 ]]
 
 
