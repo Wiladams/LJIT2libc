@@ -1,20 +1,44 @@
+--[[
+	Ideally most of this should be in sys/ioctl, and only the very 
+	arch specific stuff should be dealt with here.
+--]]
+
 local ffi = require("ffi")
 local bit = require("bit")
 local band, bor = bit.band, bit.bor
 local lshift, rshift = bit.lshift, bit.rshift
 local utils = require("libc_utils")
 
+-- very x86_64 specific
+local IOC = {
+  DIRSHIFT = 30;
+  TYPESHIFT = 8;
+  NRSHIFT = 0;
+  SIZESHIFT = 16;
+}
 
-local function _IOC(a,b,c,d) return bor( lshift(a,30), lshift(b,8), c , lshift(d,16) ) end
+local function ioc(dir, ch, nr, size)
+  if type(ch) == "string" then ch = ch:byte() end
+
+  return bor(lshift(dir, IOC.DIRSHIFT), 
+       lshift(ch, IOC.TYPESHIFT), 
+       lshift(nr, IOC.NRSHIFT), 
+       lshift(size, IOC.SIZESHIFT))
+end
+
+local function _IOC(a,b,c,d) 
+  return ioc(a,b,c,d);
+end
+
 
 local _IOC_NONE  = 0;
 local _IOC_WRITE = 1;
 local _IOC_READ  = 2;
 
-local function _IO(a,b) _IOC(_IOC_NONE,a,b,0) end
-local function _IOW(a,b,c) _IOC(_IOC_WRITE,a,b,ffi.sizeof(c)) end
-local function _IOR(a,b,c) _IOC(_IOC_READ,a,b,ffi.sizeof(c)) end
-local function _IOWR(a,b,c) _IOC(bor(_IOC_READ,_IOC_WRITE),a,b,ffi.sizeof(c)) end
+local function _IO(a,b) return _IOC(_IOC_NONE,a,b,0) end
+local function _IOW(a,b,c) return _IOC(_IOC_WRITE,a,b,ffi.sizeof(c)) end
+local function _IOR(a,b,c) return _IOC(_IOC_READ,a,b,ffi.sizeof(c)) end
+local function _IOWR(a,b,c) return _IOC(bor(_IOC_READ,_IOC_WRITE),a,b,ffi.sizeof(c)) end
 
 ffi.cdef[[
 struct winsize {
@@ -208,11 +232,23 @@ local Constants = {
 
 	SIOCDEVPRIVATE  = 0x89F0;
 	SIOCPROTOPRIVATE = 0x89E0
+
+	_IOC_NONE = _IOC_NONE;
+	_IOC_WRITE = _IOC_WRITE;
+	_IOC_READ = _IOC_READ;
+
 }
 
 
 local exports = {
 	Constants = Constants;
+
+	-- Functions
+	_IOC = _IOC;
+	_IO = _IO;
+	_IOW = _IOW;
+	_IOR = _IOR;
+	_IOWR = _IOWR;
 }
 
 setmetatable(exports, {

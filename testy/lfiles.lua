@@ -3,11 +3,15 @@
 local init = require("test_setup")()
 local ffi = require("ffi")
 
+local function nil_iter()
+	return nil;
+end
+
 
 -- iterate over the files in a directory
 -- skip over '.' and '..' so we don't end 
 -- up in infinite loops too easily
-local function diriter(param, state)
+local function dir_iter(param, state)
 	if state == nil then return nil end;
 	local name = nil;
 	while state ~= nil do
@@ -25,11 +29,11 @@ local function diriter(param, state)
 	return nextone, name
 end
 
-local function iterateDirectory(dirname)
+local function directoryIterator(dirname)
 	local dir = opendir(dirname)
 
 
-	if not dir==nil then return diriter, nil, nil; end
+	if not dir==nil then return nil_iter, nil, nil; end
 
 	-- make sure to do the finalizer
 	-- for garbage collection
@@ -37,14 +41,14 @@ local function iterateDirectory(dirname)
 
 	local initial = readdir(dir);
 
-	return diriter, dir, initial;
+	return dir_iter, dir, initial;
 end
 
 
 -- Simple test case to print out all the entries in a
 -- given directory (default current directory)
 local dirname = arg[1] or "./"
-for _, entryName in iterateDirectory(dirname) do 
+for _, entryName in directoryIterator(dirname) do 
 	print(entryName)
 	stat(entryName)
 end

@@ -37,13 +37,15 @@ struct ucred
 	uid_t uid;
 	gid_t gid;
 };
+--]=]
 
+ffi.cdef[[
 struct mmsghdr
 {
 	struct msghdr msg_hdr;
 	unsigned int  msg_len;
 };
---]=]
+]]
 
 ffi.cdef[[
 int socket (int, int, int);
