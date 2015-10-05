@@ -14,6 +14,24 @@ require("bits/stat")
 local octal = utils.octal;
 
 
+--[[
+	Funny stories for such simple functions.
+	The bottom line is, use syscall as libcs differ
+	in how the 'stat()' function is implemented.
+	GNU C defines these '__' versions, whereas musl
+	defines the real deal, and each has to wrap the other
+	really dumb.
+
+	But, alas, __xstat is standard, so that's the one that wins
+--]]
+
+ffi.cdef[[
+int __fxstat(int ver, int fd, struct stat *buf);
+int __fxstatat(int ver, int fd, const char *path, struct stat *buf, int flag);
+int __lxstat(int ver, const char *path, struct stat *buf);
+int __xstat(int ver, const char *path, struct stat *buf);
+]]
+
 ffi.cdef[[
 int stat(const char *__restrict, struct stat *__restrict);
 int fstat(int, struct stat *);
@@ -85,17 +103,24 @@ local Functions = {
 	chmod = ffi.C.chmod;
 	fchmod = ffi.C.fchmod;
 	fchmodat = ffi.C.fchmodat;
+	futimens = ffi.C.futimens;
+
+	__xstat = ffi.C.__xstat;
+	__lxstat = ffi.C.__lxstat;
+	
 --	fstat = ffi.C.fstat;
 --	fstatat = ffi.C.fstatat;
-	futimens = ffi.C.futimens;
 --	lstat = ffi.C.lstat;
+--	stat = ffi.C.stat;
+	stat = function(path, buf) return ffi.C.__xstat(_STAT_VER, path, buf) end;
+	lstat = function(path, buf) return ffi.C.__lxstat(_STAT_VER, path, buf) end;
+
 	mkdir = ffi.C.mkdir;
 	mkdirat = ffi.C.mkdirat;
 	mkfifo = ffi.C.mkfifo;
 	mkfifoat = ffi.C.mkfifoat;
 --	mknod = ffi.C.mknod;
 --	mknodat = ffi.C.mknodat;
---	stat = ffi.C.stat;
 	umask = ffi.C.umask;
 	utimensat = ffi.C.utimensat;
 }
@@ -107,6 +132,7 @@ local exports = {
 
 setmetatable(exports, {
 	__call = function(self, tbl)
+		tbl = tbl or _G
 		utils.copyPairs(self.Constants, tbl)
 		utils.copyPairs(self.Functions, tbl)
 

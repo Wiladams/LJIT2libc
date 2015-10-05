@@ -29,7 +29,7 @@ local function dir_iter(param, state)
 	return nextone, name
 end
 
-local function directoryIterator(dirname)
+local function files(dirname)
 	local dir = opendir(dirname)
 
 
@@ -48,7 +48,6 @@ end
 -- Simple test case to print out all the entries in a
 -- given directory (default current directory)
 local dirname = arg[1] or "./"
-for _, entryName in directoryIterator(dirname) do 
+for _, entryName in files(dirname) do 
 	print(entryName)
-	stat(entryName)
 end

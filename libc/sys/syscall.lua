@@ -1,3 +1,3 @@
 
 
-require ("bits/syscall")
+return require ("bits/syscall")

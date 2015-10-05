@@ -39,12 +39,13 @@ local function setup(homePath)
 		byteswap = require("byteswap");
 		ctype = require("ctype");
 		dirent = require("dirent");
+		errno = require("errno");
 		fcntl = require("fcntl");
 		libgen = require("libgen");
 		stdint = require("stdint");
 		stdio = require("stdio");
 		stdlib = require("stdlib");
-		string = require("string");
+		string_h = require("string_h");
 	}
 
 	setmetatable(exports, {

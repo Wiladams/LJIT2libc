@@ -48,9 +48,9 @@ size_t strnlen (const char *, size_t);
 char *strdup (const char *);
 char *strndup (const char *, size_t);
 char *strsignal(int);
-char *strerror_l (int, locale_t);
-int strcoll_l (const char *, const char *, locale_t);
-size_t strxfrm_l (char *__restrict, const char *__restrict, size_t, locale_t);
+//char *strerror_l (int, locale_t);
+//int strcoll_l (const char *, const char *, locale_t);
+//size_t strxfrm_l (char *__restrict, const char *__restrict, size_t, locale_t);
 ]]
 
 ffi.cdef[[
@@ -65,8 +65,8 @@ size_t strlcpy (char *, const char *, size_t);
 
 ffi.cdef[[
 int strverscmp (const char *, const char *);
-int strcasecmp_l (const char *, const char *, locale_t);
-int strncasecmp_l (const char *, const char *, size_t, locale_t);
+//int strcasecmp_l (const char *, const char *, locale_t);
+//int strncasecmp_l (const char *, const char *, size_t, locale_t);
 char *strchrnul(const char *, int);
 char *strcasestr(const char *, const char *);
 void *memmem(const void *, size_t, const void *, size_t);
@@ -76,9 +76,36 @@ char *basename();
 ]]
 
 --#define	strdupa(x)	strcpy(alloca(strlen(x)+1),x)
+local function stringerror(num)
+	num = num or ffi.errno();
+	local str = ffi.C.strerror(num)
+	if str == nil then
+		return string.format("ERROR:[%d]", num)
+	end
+
+	return ffi.string(str);
+end
 
 local exports = {
-	
+	memchr = ffi.C.memchr;
+	memcmp = ffi.C.memcmp;
+	memcpy = ffi.C.memcpy;
+	memmove = ffi.C.memmove;
+	memset = ffi.C.memset;
+
+	strlen = ffi.C.strlen;
+	strerror = ffi.C.strerror;
+	errno_string = stringerror;
 }
+
+setmetatable(exports, {
+	__call = function(self, tbl)
+		tbl = tbl or _G
+		for k,v in pairs(self) do
+			tbl[k] = v;
+		end
+		return self;
+	end,
+})
 
 return exports
