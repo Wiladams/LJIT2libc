@@ -46,6 +46,7 @@ local function setup(homePath)
 		stdio = require("stdio");
 		stdlib = require("stdlib");
 		string_h = require("string_h");
+		unistd = require("unistd");
 	}
 
 	setmetatable(exports, {
