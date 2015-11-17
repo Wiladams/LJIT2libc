@@ -184,7 +184,7 @@ static const int __NR_quotactl				=179;
 static const int __NR_nfsservctl				=180;
 static const int __NR_getpmsg				=181;
 static const int __NR_putpmsg				=182;
-static const int __NR_afs_syscall			=183;
+static const int __NR_afs_syscall			=183;			// NoImp
 static const int __NR_tuxcall				=184;
 static const int __NR_security				=185;
 static const int __NR_gettid					=186;
@@ -323,6 +323,6 @@ static const int __NR_getrandom				=318;
 static const int __NR_memfd_create			=319;
 static const int __NR_kexec_file_load			=320;
 static const int __NR_bpf				=321;
-static const int __NR_execveat				=322
+static const int __NR_execveat				=322;
 ]]
 

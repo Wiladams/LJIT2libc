@@ -33,7 +33,7 @@ setmetatable(exports, {
 		-- in the library
 		local success, value = pcall(function() return ffi.C[key] end)
 		if success then
-			rawset(key, value)
+			rawset(self, key, value)
 			return value;
 		end
 
