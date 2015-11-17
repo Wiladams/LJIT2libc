@@ -37,11 +37,11 @@ int truncate(const char *, off_t);
 int ftruncate(int, off_t);
 ]]
 
---[[
-#define F_OK 0
-#define R_OK 4
-#define W_OK 2
-#define X_OK 1
+ffi.cdef[[
+static const int F_OK = 0;
+static const int R_OK = 4;
+static const int W_OK = 2;
+static const int X_OK = 1;
 
 int access(const char *, int);
 int faccessat(int, const char *, int, int);
@@ -62,8 +62,8 @@ int execl(const char *, const char *, ...);
 int execvp(const char *, char *const []);
 int execlp(const char *, const char *, ...);
 int fexecve(int, char *const [], char *const []);
-_Noreturn void _exit(int);
---]]
+void _exit(int);
+]]
 
 ffi.cdef[[
 pid_t getpid(void);
@@ -93,27 +93,35 @@ int setegid(gid_t);
 ]]
 
 
---[[
+ffi.cdef[[
 char *getlogin(void);
 int getlogin_r(char *, size_t);
 int gethostname(char *, size_t);
 char *ctermid(char *);
+]]
 
+ffi.cdef[[
 int getopt(int, char * const [], const char *);
 extern char *optarg;
 extern int optind, opterr, optopt;
+]]
 
+ffi.cdef[[
 long pathconf(const char *, int);
 long fpathconf(int, int);
 long sysconf(int);
 size_t confstr(int, char *, size_t);
+]]
 
-#define F_ULOCK 0
-#define F_LOCK  1
-#define F_TLOCK 2
-#define F_TEST  3
+ffi.cdef[[
+static const int F_ULOCK = 0;
+static const int F_LOCK  = 1;
+static const int F_TLOCK = 2;
+static const int F_TEST  = 3;
+]]
 
-#if defined(_XOPEN_SOURCE) || defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
+ffi.cdef[[
+//#if defined(_XOPEN_SOURCE) || defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
 int lockf(int, int, off_t);
 long gethostid(void);
 int nice(int);
@@ -122,18 +130,22 @@ pid_t setpgrp(void);
 char *crypt(const char *, const char *);
 void encrypt(char *, int);
 void swab(const void *__restrict, void *__restrict, ssize_t);
-#endif
+//#endif
+]]
 
-#if defined(_GNU_SOURCE) || defined(_BSD_SOURCE) \
- || (defined(_XOPEN_SOURCE) && _XOPEN_SOURCE+0 < 700)
-int usleep(unsigned);
-unsigned ualarm(unsigned, unsigned);
-#endif
+ffi.cdef[[
+//#if defined(_GNU_SOURCE) || defined(_BSD_SOURCE) || (defined(_XOPEN_SOURCE) && _XOPEN_SOURCE+0 < 700)
+int usleep(unsigned int);
+unsigned ualarm(unsigned int, unsigned int);
+//#endif
+]]
 
-#if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
-#define L_SET 0
-#define L_INCR 1
-#define L_XTND 2
+ffi.cdef[[
+//#if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
+static const int L_SET  = 0;
+static const int L_INCR = 1;
+static const int L_XTND = 2;
+
 int brk(void *);
 void *sbrk(intptr_t);
 pid_t vfork(void);
@@ -154,9 +166,11 @@ int acct(const char *);
 long syscall(long, ...);
 int execvpe(const char *, char *const [], char *const []);
 int issetugid(void);
-#endif
+//#endif
+]]
 
-#ifdef _GNU_SOURCE
+ffi.cdef[[
+//#ifdef _GNU_SOURCE
 extern char **environ;
 int setresuid(uid_t, uid_t, uid_t);
 int setresgid(gid_t, gid_t, gid_t);
@@ -166,9 +180,9 @@ char *get_current_dir_name(void);
 int syncfs(int);
 int euidaccess(const char *, int);
 int eaccess(const char *, int);
-#endif
+//#endif
+]]
 
---]]
 local exports = {
 	
 }
