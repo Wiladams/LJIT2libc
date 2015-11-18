@@ -156,8 +156,8 @@ print("Page Size: ", getPageSize());
 print("   Random: ", getRandom());
 end
 
-local function test_auxviter()
-	for key, value in auxviterator() do
+local function test_auxviter(path)
+	for key, value in auxviterator(path) do
 		io.write(string.format("%20s[%2d] : ", auxtbl[key], key))
 		print(value);
 	end
@@ -165,5 +165,5 @@ end
 
 
 --test_getauxvalue();
-test_auxviter();
+test_auxviter(arg[1]);
 
