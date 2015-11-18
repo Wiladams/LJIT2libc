@@ -157,8 +157,7 @@ print("   Random: ", getRandom());
 end
 
 local function test_auxviter()
-	--for key, value in auxviterator() do
-	for key, value in auxviterator("/proc/2424/auxv") do
+	for key, value in auxviterator() do
 		io.write(string.format("%20s[%2d] : ", auxtbl[key], key))
 		print(value);
 	end
