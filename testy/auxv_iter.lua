@@ -11,6 +11,10 @@ local libc = require("libc")
 
 local E = {}
 
+-- This table maps the constant values for the various
+-- AT_* types to their symbolic names.  This table is used
+-- to both generate cdefs, as well and hand back symbolic names
+-- for the keys.
 local auxtbl = {
 	[0] =  "AT_NULL";
 	[1] =  "AT_IGNORE";
@@ -47,6 +51,12 @@ local auxtbl = {
 	[36] = "AT_L2_CACHESHAPE";
 }
 
+-- Given a auxv key(type), and the value returned from reading
+-- the file, turn the value into a lua specific type.
+-- string pointers --> string
+-- int values -> number
+-- pointer values -> intptr_t
+
 local function auxvaluefortype(atype, value)
 	if atype == libc.AT_EXECFN or atype == libc.AT_PLATFORM then
 		return ffi.string(ffi.cast("char *", value))
@@ -70,9 +80,12 @@ local function auxvaluefortype(atype, value)
 	end
 
 
-	return value;
+	return ffi.cast("intptr_t", value);
 end
 
+-- iterate over the auxv values at the specified path
+-- if no path is specified, use '/proc/self/auxv' to get
+-- the values for the currently running program
 local function auxviterator(path)
 	path = path or "/proc/self/auxv"
 	local fd = libc.open(path, libc.O_RDONLY);
@@ -101,6 +114,8 @@ local function auxviterator(path)
 
 end
 
+-- generate ffi.cdef calls to turn the symbolic type names
+-- into constant integer values
 local cdefsGenerated = false;
 
 local function gencdefs()
@@ -112,6 +127,9 @@ local function gencdefs()
 	cdefsGenerated = true;
 end
 
+-- get a single value for specified key.  A path can be specified
+-- as well (default it '/proc/self/auxv')
+-- this is most like the gnuC getauxval() function
 local function getOne(key, path)
 	-- iterate over the values, looking for the one we want
 	for _, atype, value in auxviterator(path) do
@@ -129,6 +147,9 @@ E.keynames = auxtbl;
 E.getOne = getOne;
 
 setmetatable(E, {
+	-- we allow the user to specify one of the symbolic constants
+	-- when doing a 'getOne()'.  This indexing allows for the creation
+	-- and use of those constants if they haven't already been specified
 	__index = function(self, key)
 		if not cdefsGenerated then
 			gencdefs();
@@ -139,6 +160,8 @@ setmetatable(E, {
 			rawset(self, key, value);
 			return value;
 		end
+
+		return nil;
 	end,
 
 })
