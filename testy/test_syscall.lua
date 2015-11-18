@@ -1,4 +1,7 @@
 -- test_syscall.lua
+-- References
+--	ld-linux.so
+--  getauxval
 local init = require("test_setup")()
 local ffi = require("ffi")
 local Sys = require("syscalls")

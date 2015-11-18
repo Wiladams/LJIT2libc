@@ -28,6 +28,7 @@ local function setup(homePath)
 		netinet_in = require("netinet/in_h");
 		netinet_tcp = require("netinet/tcp");
 
+		sys_auxv = require("sys/auxv");
 		sys_epoll = require("sys/epoll");
 		sys_ioctl = require("sys/ioctl");
 		sys_socket = require("sys/socket");
@@ -39,6 +40,7 @@ local function setup(homePath)
 		byteswap = require("byteswap");
 		ctype = require("ctype");
 		dirent = require("dirent");
+		elf = require("elf");
 		errno = require("errno");
 		fcntl = require("fcntl");
 		libgen = require("libgen");
