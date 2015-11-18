@@ -1,9 +1,18 @@
+local ffi = require("ffi")
 local utils = require("libc_utils")
 local octal = utils.octal
 
 local O_NONBLOCK   = octal('04000')
 
+ffi.cdef[[
+static const int	O_ACCMODE	= 00000003;
+static const int	O_RDONLY	= 00000000;
+static const int	O_WRONLY	= 00000001;
+static const int	O_RDWR		= 00000002;
+]]
+
 local Constants = {
+
 	O_CREAT     = octal('0100');
 	O_EXCL      = octal('0200');
 	O_NOCTTY    = octal('0400');
@@ -19,11 +28,11 @@ local Constants = {
 
 	O_ASYNC     = octal('020000');
 	O_DIRECT    = octal('040000');
-	O_LARGEFILE      = 0;
-	O_NOATIME  = octal('01000000');
-	O_PATH    = octal('010000000');
-	O_TMPFILE = octal('020200000');
-	O_NDELAY = O_NONBLOCK;
+	O_LARGEFILE = 0;
+	O_NOATIME  	= octal('01000000');
+	O_PATH    	= octal('010000000');
+	O_TMPFILE 	= octal('020200000');
+	O_NDELAY 	= O_NONBLOCK;
 
 	F_DUPFD  = 0;
 	F_GETFD  = 1;
